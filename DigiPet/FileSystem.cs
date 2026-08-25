@@ -1,35 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-using System.Xml.Linq;
+﻿using System.Text.Json;
 
 namespace DigiPet
 {
     class FileSystem
     {
-        private string _path;
+        private readonly string _path;
 
         public FileSystem(string path)
         {
-            this._path = path;
+            _path = path;
         }
 
         public void Save(DigiPet pet)
         {
-            var data = JsonSerializer.Serialize(pet);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            var data = JsonSerializer.Serialize(pet, options);
             File.WriteAllText(_path, data);
-            // save logic
         }
 
-        public DigiPet Load(string path)
+        public DigiPet? Load()
         {
-            this._path = path;
-            if (!File.Exists(path)) return null;
+            if (!File.Exists(_path)) return null;
 
-            var fileText = File.ReadAllText(path);
-
-            if (string.IsNullOrWhiteSpace(path)) return null;
+            var fileText = File.ReadAllText(_path);
+            if (string.IsNullOrWhiteSpace(fileText)) return null;
 
             try
             {

@@ -6,44 +6,32 @@ namespace DigiPet
 {
     class DigiPet : IFightable
     {
-        enum PetStatus
-        {
-            Happy,
-            Mad,
-            Sad,
-        }
-        private string _name;
-        private DateTime _born;
-        private int _hunger;
-        private int _health;
-        private int _happiness;
-        private PetStatus _status;
-        private Inventory _inventory;
+
+        public string Name;
+        public DateTime Born;
+        public int Hunger;
+        public int Health;
+        public int Happiness;
+        public Inventory Inventory;
 
         public DigiPet(string name)
         {
-            this._name = name;
-            this._born = DateTime.Now;
-            this._hunger = 100;
-            this._health = 100;
-            this._happiness = 100;
-            this._status = PetStatus.Happy;
-            this._inventory = new();
-        }
-
-        public void Feed(Item food)
-        {
-
+            this.Name = name;
+            this.Born = DateTime.Now;
+            this.Hunger = 100;
+            this.Health = 100;
+            this.Happiness = 100;
+            this.Inventory = new(this);
         }
 
         public void Pet()
         {
-            this._happiness += 10;
+            this.Happiness += 10;
         }
 
         public void CleanUp()
         {
-            this._inventory.;
+            this.Inventory.ClearInventory();
         }
 
         public int Attack(IFightable target)
@@ -55,21 +43,22 @@ namespace DigiPet
 
         public void TakeDamage(int amount)
         {
-            this._health -= amount;
+            this.Health -= amount;
         }
 
         public void Tick()
         {
-            this._happiness -= 1;
-            if (this._hunger <= 0)
+            Thread.Sleep(2000);
+            this.Happiness -= 1;
+            if (this.Hunger <= 0)
             {
-                if (this._health <= 0)
+                if (this.Health <= 0)
                 {
                     // die (Use event?)
                 }
-                this._health -= 1;
+                this.Health -= 1;
             }
-            this._hunger -= 1;
+            this.Hunger -= 1;
         }
     }
 }

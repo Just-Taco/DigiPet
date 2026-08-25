@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 
 namespace DigiPet
@@ -7,10 +8,16 @@ namespace DigiPet
     class Inventory
     {
         private List<Item> _items = new();
+        private DigiPet _pet;
+
+        public Inventory(DigiPet Pet)
+        {
+            this._pet = Pet;
+        }
 
         public void UseItem(Item item)
         {
-
+            item.Use(_pet);
         }
 
         public void AddItem(Item item)
