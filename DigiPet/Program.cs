@@ -4,27 +4,38 @@
     {
         static void Main(string[] args)
         {
-            string? name;
-            string? output;
+            string path;
+            string name = "DigiPet";
+
             while (true)
             {
                 Console.Write("Path til file save/load: ");
-                output = Console.ReadLine();
+                string? input = Console.ReadLine();
 
-                Console.Write("Navn på DigiPet: ");
-                name = Console.ReadLine();
-
-                if (string.IsNullOrWhiteSpace(output) || string.IsNullOrWhiteSpace(name))
+                if (string.IsNullOrWhiteSpace(input))
                 {
                     Console.WriteLine("Invalid Input!");
                     continue;
                 }
 
-                if (File.Exists(output)) break;
-                Console.WriteLine("Invalid Path!");
+                path = input;
+
+                if (File.Exists(path) || File.Exists(Path.Combine(path, "digipet.json"))) break;  
+
+                Console.Write("Navn på DigiPet: ");
+                string? nameInput = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(nameInput))
+                {
+                    Console.WriteLine("Invalid Input!");
+                    continue;
+                }
+
+                name = nameInput;
+                break;
             }
 
-            GameController Game = new(name, output);
+            GameController Game = new(path, name);
             Game.Run();
         }
     }

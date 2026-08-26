@@ -7,27 +7,26 @@ namespace DigiPet
 {
     class Item
     {
-        public readonly string _name;
-        public readonly int _price;
-        public int _heal;
-        public int _food;
+        public string Name { get; set; }
+        public int Price { get; set; }
+        public int Heal { get; set; }
+        public int Food { get; set; }
+
+        public Item() { }
 
         public Item(string name, int price, int heal, int food)
         {
-            this._name = name;
-            this._price = price;
-            this._heal = heal;
-            this._food = food;
+            Name = name;
+            Price = price;
+            Heal = heal;
+            Food = food;
         }
 
         public void Use(DigiPet target)
         {
-            target.Health += _heal;
-            if (target.Health > 100) target.Health = 100;
-            target.Hunger += _food;
-            if (target.Hunger > 100) target.Hunger = 100;
-            target.Happiness += 5;
-            if (target.Happiness > 100) target.Happiness = 100;
+            target.Health = Math.Clamp(target.Health + Heal, 0, 100);
+            target.Hunger = Math.Clamp(target.Hunger + Food, 0, 100);
+            target.Happiness = Math.Clamp(target.Happiness + 5, 0, 100);
         }
     }
 }

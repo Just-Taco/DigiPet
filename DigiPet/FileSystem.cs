@@ -4,16 +4,28 @@ namespace DigiPet
 {
     class FileSystem
     {
+        private const string FileName = "digipet.json";
+
+        private readonly string _folder;
         private readonly string _path;
 
-        public FileSystem(string path)
+        public FileSystem(string folder)
         {
-            _path = path;
+            _folder = folder;
+            if (File.Exists(folder))
+            {
+                _path = folder;
+            } else
+            {
+                _path = Path.Combine(folder, FileName);
+            }
         }
 
+        static private JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
         public void Save(DigiPet pet)
         {
-            var options = new JsonSerializerOptions { WriteIndented = true };
+            Directory.CreateDirectory(_folder);
+
             var data = JsonSerializer.Serialize(pet, options);
             File.WriteAllText(_path, data);
         }
@@ -25,14 +37,7 @@ namespace DigiPet
             var fileText = File.ReadAllText(_path);
             if (string.IsNullOrWhiteSpace(fileText)) return null;
 
-            try
-            {
-                return JsonSerializer.Deserialize<DigiPet>(fileText);
-            }
-            catch (JsonException)
-            {
-                return null;
-            }
+            return JsonSerializer.Deserialize<DigiPet>(fileText, options);
         }
     }
 }

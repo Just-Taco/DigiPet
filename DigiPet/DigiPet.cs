@@ -7,12 +7,12 @@ namespace DigiPet
     class DigiPet : IFightable
     {
 
-        public string Name;
-        public DateTime Born;
-        public int Hunger;
-        public int Health;
-        public int Happiness;
-        public Inventory Inventory;
+        public string Name { get; set; }
+        public DateTime Born { get; set; }
+        public int Hunger { get; set; }
+        public int Health { get; set; }
+        public int Happiness { get; set; }
+        public Inventory Inventory { get; set; } = new();
 
         public DigiPet(string name)
         {
@@ -21,12 +21,12 @@ namespace DigiPet
             this.Hunger = 100;
             this.Health = 100;
             this.Happiness = 100;
-            this.Inventory = new(this);
         }
 
-        public void Pet()
+        public string Pet()
         {
             this.Happiness += 10;
+            return "mis mis";
         }
 
         public void CleanUp()

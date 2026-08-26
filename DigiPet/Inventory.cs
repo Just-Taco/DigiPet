@@ -7,33 +7,39 @@ namespace DigiPet
 {
     class Inventory
     {
-        private List<Item> _items = new();
-        private DigiPet _pet;
+        private List<Item> Items { get; set; } = new();
+        //Consumab
+        //Healing items
+        //Food items
+        //weapon items
+        //Armor
 
-        public Inventory(DigiPet Pet)
+        public string UseItem(Item item, DigiPet pet, ItemController items)
         {
-            this._pet = Pet;
-        }
+            if (!Items.Contains(item))
+            {
+                return "You dont have that";
+            }
 
-        public void UseItem(Item item)
-        {
-            item.Use(_pet);
+            item.Use(pet);
+            Items.Remove(item);
+            return $"Used {item}";
         }
 
         public void AddItem(Item item)
         {
-            this._items.Add(item);
+            this.Items.Add(item);
         }
 
         public void RemoveItem(Item item)
         {
-            this._items.Remove(item);
+            this.Items.Remove(item);
         }
 
         public void ClearInventory()
         {
             // CHECK THIS (does it delete or just create more and more lists??)
-            this._items = new();
+            this.Items = new();
         }
 
     }
