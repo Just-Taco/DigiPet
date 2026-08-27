@@ -7,31 +7,41 @@ namespace DigiPet
 {
     class Inventory
     {
-        private List<Item> Items { get; set; } = new();
+        public List<IItem> Items { get; set; } = new();
         //Consumab
         //Healing items
         //Food items
         //weapon items
         //Armor
 
-        public string UseItem(Item item, DigiPet pet, ItemController items)
+        public string UseItem(IItem item, DigiPet pet)
         {
             if (!Items.Contains(item))
             {
                 return "You dont have that";
             }
 
-            item.Use(pet);
-            Items.Remove(item);
-            return $"Used {item}";
+            if (item is not IUseable useable)
+            {
+                return $"You cant use {item.Name} like that"; 
+            }
+
+            string result = useable.Use(pet);
+
+            if (item is IConsumable)
+            {
+                Items.Remove(item);
+            }
+
+            return result;
         }
 
-        public void AddItem(Item item)
+        public void AddItem(IItem item)
         {
             this.Items.Add(item);
         }
 
-        public void RemoveItem(Item item)
+        public void RemoveItem(IItem item)
         {
             this.Items.Remove(item);
         }

@@ -7,24 +7,27 @@ namespace DigiPet
        
     class ItemController
     {
-        public List<Item> Items = new();
+        public List<IItem> Items = new();
 
         public ItemController()
         {
-            Items.Add(new Item("Apple", 10, 0, 30));
-            Items.Add(new Item("Steak", 25, 5, 60));
-            Items.Add(new Item("Potion", 50, 40, 0));
-            Items.Add(new Item("Elixir", 120, 100, 50));
+            Items.Add(new Food("Apple", 10, 30));
+            Items.Add(new Potion("Potion", 50, 40));
         }
 
-        public Item? Find(string name)
+        public IItem? Find(string name)
         {
-            foreach (Item item in Items)
+            foreach (IItem item in Items)
             {
                 if (item.Name.ToLower() == name.ToLower())
                     return item;
             }
             return null;
+        }
+
+        public IItem RandomItem()
+        {
+            return Items[RNG.randomNumber(0, Items.Count)];
         }
     }
 }

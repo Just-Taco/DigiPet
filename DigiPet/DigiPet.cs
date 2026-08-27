@@ -8,10 +8,14 @@ namespace DigiPet
     {
 
         public string Name { get; set; }
+        public bool IsAlive { get; }
         public DateTime Born { get; set; }
         public int Hunger { get; set; }
         public int Health { get; set; }
         public int Happiness { get; set; }
+        public int Coins { get; set; } = 100;
+        public IEquippable? Weapon { get; set; }
+        public IEquippable? Armor { get; set; }
         public Inventory Inventory { get; set; } = new();
 
         public DigiPet(string name)
@@ -36,29 +40,31 @@ namespace DigiPet
 
         public int Attack(IFightable target)
         {
-            // Item logic ? Add
-            const int damage = 10;
-            return damage;
+            return 10 + (Weapon?.Damage ?? 0);
         }
 
         public void TakeDamage(int amount)
         {
-            this.Health -= amount;
+            int blocked = Armor?.Armor ?? 0;
+            Health -= Math.Max(1, amount - blocked);
         }
 
         public void Tick()
         {
-            Thread.Sleep(2000);
-            this.Happiness -= 1;
-            if (this.Hunger <= 0)
+            while (true)
             {
-                if (this.Health <= 0)
+                Thread.Sleep(10000);
+                Happiness -= 1;
+                Hunger -= 1;
+                if (Hunger <= 0)
                 {
-                    // die (Use event?)
+                    Health -= 1;
+                    if (Health <= 0)
+                    {
+                        // die
+                    }
                 }
-                this.Health -= 1;
             }
-            this.Hunger -= 1;
         }
     }
 }
