@@ -162,6 +162,7 @@ namespace DigiPet
                         running = false;
                         break;
                     default:
+                        message = "Unknown Command";
                         break;
 
 

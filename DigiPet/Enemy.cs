@@ -17,7 +17,7 @@ namespace DigiPet
         {
             this.Name = RNG.randomAnimalName();
             this._health = RNG.randomNumber(20, 70);
-            this._atkDamage = RNG.randomNumber(2, 5);
+            this._atkDamage = RNG.randomNumber(5, 10);
         }
 
 

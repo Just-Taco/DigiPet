@@ -21,6 +21,7 @@ namespace DigiPet
             }
         }
 
+        // Var nød til at søge online for dette
         static private JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
         public void Save(DigiPet pet)
         {
