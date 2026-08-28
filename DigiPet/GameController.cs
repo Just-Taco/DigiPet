@@ -64,6 +64,11 @@ namespace DigiPet
             thread.IsBackground = true;
             thread.Start();
             bool running = true;
+            Pet.Died += (pet) =>
+            {
+                DrawScreen(pet, _itemcontroller, $"{pet.Name} døde...");
+                running = false;
+            };
             string message = "";
             while (running)
             {
@@ -83,7 +88,7 @@ namespace DigiPet
                 switch (command)
                 {
                     case "explore":
-                        if (RNG.randomNumber(1, 101) <= 50)
+                        if (RNG.randomNumber(1, 101) <= 80)
                         {
                             Enemy enemy = new();
                             message = _battle.Battle(Pet, enemy);
@@ -109,7 +114,7 @@ namespace DigiPet
                     case "use":
                         if (parts.Length > 1)
                         {
-                            IItem? Item = _itemcontroller.Find(parts[1]);
+                            IItem? Item = Pet.Inventory.Find(parts[1]);
                             if (Item != null)
                             {
                                 message = Pet.Inventory.UseItem(Item, Pet);
@@ -162,14 +167,9 @@ namespace DigiPet
 
 
                 }
-                if (!Pet.IsAlive)
-                {
-                    DrawScreen(Pet, _itemcontroller, $"{Pet.Name} died...");
-                    running = false;
-                }
+
             }
         }
-
 
         private static string FormatAge(TimeSpan age)
         {
@@ -189,9 +189,5 @@ namespace DigiPet
             return $"{age.Seconds}s";
         }
 
-        public void HandleInput(string cmd)
-        {
-
-        }
     }
 }

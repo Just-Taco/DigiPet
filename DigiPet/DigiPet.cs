@@ -6,9 +6,12 @@ namespace DigiPet
 {
     class DigiPet : IFightable
     {
+        public delegate void DeathHandler(DigiPet pet);
+        public event DeathHandler? Died;
 
         public string Name { get; set; }
         public bool IsAlive => Health > 0;
+        private bool _hasDied = false;
         public DateTime Born { get; set; }
         public int Hunger { get; set; }
         public int Health { get; set; }
@@ -44,6 +47,11 @@ namespace DigiPet
         public void TakeDamage(int amount)
         {
             Health -= Math.Max(1, amount);
+            if (!IsAlive && !_hasDied)
+            {
+                _hasDied = true;
+                Died?.Invoke(this);
+            }
         }
 
         public void Tick()
@@ -56,6 +64,11 @@ namespace DigiPet
                 if (Hunger <= 0)
                 {
                     Health -= 1;
+                    if (!IsAlive && !_hasDied)
+                    {
+                        _hasDied = true;
+                        Died?.Invoke(this);
+                    }
                 }
             }
         }

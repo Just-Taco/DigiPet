@@ -52,5 +52,17 @@ namespace DigiPet
             this.Items = new();
         }
 
+        public IItem? Find(string name)
+        {
+            foreach (IItem item in Items)
+            {
+                if (item.Name.ToLower() == name.ToLower())
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
     }
 }
