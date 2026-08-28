@@ -13,12 +13,12 @@ namespace DigiPet
 
         static public int randomNumber(int x, int y)
         {
-            return rng.Next(x, y - 1);
+            return rng.Next(x, y);
         }
 
         static public string randomAnimalName()
         {
-            return names[rng.Next(0, names.Length - 1)];
+            return names[rng.Next(0, names.Length)];
         }
     }
 }

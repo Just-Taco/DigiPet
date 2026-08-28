@@ -63,114 +63,119 @@ namespace DigiPet
             Thread thread = new(Pet.Tick); // starts food and happiness drain
             thread.IsBackground = true;
             thread.Start();
-            try
+            bool running = true;
+            string message = "";
+            while (running)
             {
-                bool running = true;
-                string message = "";
-                while (running)
+                DrawScreen(Pet, _itemcontroller, message);
+                message = "";
+
+                Console.Write("Command: ");
+                string? input = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(input))
                 {
-                    DrawScreen(Pet, _itemcontroller, message);
-                    message = "";
+                    message = "Error: No text found";
+                    continue;
+                }
+                string[] parts = input.Split(' ');
+                string command = parts[0];
 
-                    Console.Write("Command: ");
-                    string? input = Console.ReadLine();
-                    if (string.IsNullOrWhiteSpace(input))
-                    {
-                        message = "Error: No text found";
-                        continue;
-                    }
-                    string[] parts = input.Split(' ');
-                    string command = parts[0];
-                    switch (command)
-                    {
-                        case "explore":
-                            if (RNG.randomNumber(1, 101) <= 50)
+                switch (command)
+                {
+                    case "explore":
+                        if (RNG.randomNumber(1, 101) <= 50)
+                        {
+                            Enemy enemy = new();
+                            message = _battle.Battle(Pet, enemy);
+                            if (Pet.IsAlive)
                             {
-                                Enemy enemy = new();
-                                message = _battle.Battle(Pet, enemy);
-                                if (Pet.IsAlive) Pet.Coins += RNG.randomNumber(10, 40);
+                                Pet.Coins += RNG.randomNumber(10, 40);
                             }
-                            else
+                        }
+                        else
+                        {
+                            IItem loot = _itemcontroller.RandomItem().Copy();
+                            Pet.Inventory.AddItem(loot);
+                            message = $"You found a {loot.Name}!";
+                        }
+                        break;
+                    case "items":
+                        foreach (IItem item in Pet.Inventory.Items)
+                        {
+                            Console.WriteLine($"  {item.Name}");
+                        }
+                        Thread.Sleep(4000);
+                        break;
+                    case "use":
+                        if (parts.Length > 1)
+                        {
+                            IItem? Item = _itemcontroller.Find(parts[1]);
+                            if (Item != null)
                             {
-                                IItem loot = _itemcontroller.RandomItem().Copy();
-                                Pet.Inventory.AddItem(loot);
-                                message = $"You found a {loot.Name}!";
-                            }
-                            break;
-                        case "items":
-                            foreach (IItem item in Pet.Inventory.Items)
-                            {
-                                Console.WriteLine($"  {item.Name}");
-                            }
-                            Thread.Sleep(4000);
-                            break;
-                        case "use":
-                            if (parts.Length > 1)
-                            {
-                                IItem? Item = _itemcontroller.Find(parts[1]);
-                                if (Item != null)
-                                {
-                                    message = Pet.Inventory.UseItem(Item, Pet);
-                                }
-                                
-                            } else
-                            {
-                                message = "Error: No argument";
-                                break;
-                            }
-                            break;
-                        case "buy":
-                            if (parts.Length < 2)
-                            {
-                                message = "Error: No argument";
-                                break;
+                                message = Pet.Inventory.UseItem(Item, Pet);
                             }
 
-                            IItem? BroughtItem = _itemcontroller.Find(parts[1]);
-                            if (BroughtItem == null)
-                            {
-                                message = $"The shop doesnt sell {parts[1]}";
-                                break;
-                            }
+                        }
+                        else
+                        {
+                            message = "Error: No argument";
+                            break;
+                        }
+                        break;
+                    case "buy":
+                        if (parts.Length < 2)
+                        {
+                            message = "Error: No argument";
+                            break;
+                        }
 
-                            if (Pet.Coins < BroughtItem.Price)
-                            {
-                                message = $"{BroughtItem.Name} costs {BroughtItem.Price}, you have {Pet.Coins}";
-                                break;
-                            }
+                        IItem? BroughtItem = _itemcontroller.Find(parts[1])?.Copy();
+                        if (BroughtItem == null)
+                        {
+                            message = $"The shop doesnt sell {parts[1]}";
+                            break;
+                        }
 
-                            Pet.Coins -= BroughtItem.Price;
-                            Pet.Inventory.AddItem(BroughtItem);
-                            message = $"Bought {BroughtItem.Name} for {BroughtItem.Price} coins";
+                        if (Pet.Coins < BroughtItem.Price)
+                        {
+                            message = $"{BroughtItem.Name} costs {BroughtItem.Price}, you have {Pet.Coins}";
                             break;
-                        case "cleanup":
-                            Pet.CleanUp();
-                            break;
-                        case "pet":
-                            message = Pet.Pet();
-                            break;
-                        case "exit":
-                            fs.Save(Pet);
-                            running = false;
-                            break;
-                        default:
-                            break;
+                        }
 
-                    }
+                        Pet.Coins -= BroughtItem.Price;
+                        Pet.Inventory.AddItem(BroughtItem);
+                        message = $"Bought {BroughtItem.Name} for {BroughtItem.Price} coins";
+                        break;
+                    case "cleanup":
+                        Pet.CleanUp();
+                        break;
+                    case "pet":
+                        message = Pet.Pet();
+                        break;
+                    case "exit":
+                        fs.Save(Pet);
+                        running = false;
+                        break;
+                    default:
+                        break;
+
+
+
+                }
+                if (!Pet.IsAlive)
+                {
+                    DrawScreen(Pet, _itemcontroller, $"{Pet.Name} died...");
+                    running = false;
                 }
             }
-            catch (Exception)
-            {
-                fs.Save(Pet);
-                throw;
-            }
-
         }
+
 
         private static string FormatAge(TimeSpan age)
         {
-            if (age.TotalDays >= 1)  {
-                return  $"{age.Days}d {age.Hours}h {age.Minutes}m";
+            if (age.TotalDays >= 1)
+            {
+                return $"{age.Days}d {age.Hours}h {age.Minutes}m";
             }
 
             if (age.TotalHours >= 1)

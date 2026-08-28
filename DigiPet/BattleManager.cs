@@ -15,16 +15,15 @@ namespace DigiPet
                 int dmg = target_x.Attack(target_y);
                 target_y.TakeDamage(dmg);
 
-                log += $"{target_x.Name} hits {target_y.Name} for {dmg}";
-
                 if (!target_y.IsAlive) break;
 
                 dmg = target_y.Attack(target_x);
                 target_x.TakeDamage(dmg);
-
-                log += $"{target_y.Name} hits {target_x.Name} for {dmg}";
             }
-            return log + $"{(target_x.IsAlive ? target_x.Name : target_y.Name)} wins!";
+
+            IFightable winner = target_x.IsAlive ? target_x : target_y;
+            IFightable loser = target_x.IsAlive ? target_y : target_x;
+            return log + $"{(winner.Name)} won against a {loser.Name}";
         }
     }
 }
